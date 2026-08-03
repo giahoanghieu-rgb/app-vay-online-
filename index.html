@@ -3,365 +3,338 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vay Tiền Nhanh Online - Lãi Suất Ưu Đãi</title>
-    <!-- Google Fonts & FontAwesome Icons -->
+    <title>Vay Tiền Nhanh Online</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
         :root {
-            --primary: #0284c7;
-            --primary-dark: #0369a1;
-            --secondary: #10b981;
-            --bg-body: #f1f5f9;
-            --card-bg: #ffffff;
-            --text-main: #0f172a;
-            --text-muted: #64748b;
-            --border-color: #e2e8f0;
+            --primary: #0284c7; --primary-dark: #0369a1; --secondary: #10b981;
+            --bg-body: #f1f5f9; --card-bg: #ffffff; --text-main: #0f172a;
+            --text-muted: #64748b; --border-color: #e2e8f0;
         }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background-color: var(--bg-body); color: var(--text-main); padding-bottom: 40px; }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            -webkit-tap-highlight-color: transparent;
+        /* Navigation & Sidebar Overlay */
+        .menu-btn {
+            position: absolute; top: 20px; left: 20px; font-size: 22px; color: white;
+            cursor: pointer; z-index: 10; background: rgba(255,255,255,0.15);
+            width: 40px; height: 40px; border-radius: 10px; display: flex;
+            align-items: center; justify-content: center; backdrop-filter: blur(5px);
         }
-
-        body {
-            background-color: var(--bg-body);
-            color: var(--text-main);
-            padding-bottom: 40px;
+        .sidebar-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); z-index: 99; opacity: 0; visibility: hidden;
+            transition: all 0.3s ease;
         }
+        .sidebar-overlay.active { opacity: 1; visibility: visible; }
+        .sidebar {
+            position: fixed; top: 0; left: -280px; width: 280px; height: 100%;
+            background: #fff; z-index: 100; transition: all 0.3s ease;
+            box-shadow: 4px 0 15px rgba(0,0,0,0.1); display: flex; flex-direction: column;
+        }
+        .sidebar.active { left: 0; }
+        .sidebar-header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white; padding: 30px 20px 20px 20px; position: relative;
+        }
+        .sidebar-menu { list-style: none; padding: 15px 0; }
+        .sidebar-menu li {
+            padding: 14px 20px; display: flex; align-items: center; gap: 14px;
+            font-size: 14px; font-weight: 600; color: var(--text-main); cursor: pointer;
+            transition: background 0.2s;
+        }
+        .sidebar-menu li:hover { background: #f8fafc; color: var(--primary); }
+        .sidebar-menu li i { font-size: 18px; width: 24px; color: var(--primary); }
 
+        /* Header UI */
         .header {
             background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            color: white;
-            padding: 24px 20px 45px 20px;
-            border-bottom-left-radius: 24px;
-            border-bottom-right-radius: 24px;
-            text-align: center;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            color: white; padding: 25px 20px 45px 20px; border-bottom-left-radius: 24px;
+            border-bottom-right-radius: 24px; text-align: center; position: relative;
         }
-
-        .header h1 { font-size: 22px; font-weight: 800; color: #f8fafc; margin-bottom: 6px; }
-        .header p { font-size: 13px; color: #94a3b8; }
-
-        .badge-trust {
-            display: inline-flex; align-items: center; gap: 6px;
-            background: rgba(16, 185, 129, 0.15); color: #34d399;
-            padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600;
-            margin-top: 12px; border: 1px solid rgba(52, 211, 153, 0.3);
-        }
+        .header h1 { font-size: 20px; font-weight: 800; }
+        .header p { font-size: 12px; color: #94a3b8; }
 
         .container { max-width: 480px; margin: -25px auto 0 auto; padding: 0 16px; }
-
         .card {
-            background: var(--card-bg); border-radius: 20px; padding: 24px 20px;
-            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); margin-bottom: 16px;
-            border: 1px solid var(--border-color);
+            background: var(--card-bg); border-radius: 20px; padding: 20px;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); margin-bottom: 16px; border: 1px solid var(--border-color);
         }
-
-        .section-title {
-            font-size: 15px; font-weight: 700; color: var(--text-main);
-            margin-bottom: 18px; display: flex; align-items: center; gap: 8px;
-        }
-
+        .section-title { font-size: 15px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
         .section-title i { color: var(--primary); }
 
-        .calc-group { margin-bottom: 20px; }
-        .calc-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-        .calc-label { font-size: 13px; font-weight: 600; color: var(--text-muted); }
-        .calc-value { font-size: 18px; font-weight: 800; color: var(--primary); }
-
-        input[type="range"] {
-            width: 100%; height: 8px; border-radius: 4px; background: #e2e8f0; outline: none; -webkit-appearance: none;
+        /* Modal Popup */
+        .modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); z-index: 200; display: none;
+            align-items: center; justify-content: center; padding: 16px;
         }
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none; width: 22px; height: 22px; border-radius: 50%;
-            background: var(--primary); cursor: pointer; box-shadow: 0 2px 6px rgba(2, 132, 199, 0.4); border: 2px solid white;
+        .modal-content {
+            background: white; border-radius: 20px; padding: 24px; width: 100%;
+            max-width: 440px; max-height: 85vh; overflow-y: auto; position: relative;
         }
+        .close-modal { position: absolute; top: 16px; right: 16px; font-size: 20px; cursor: pointer; color: #94a3b8; }
 
-        .summary-box { background: #f8fafc; border-radius: 14px; padding: 16px; border: 1px dashed #cbd5e1; margin-top: 15px; }
-        .summary-row { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 8px; color: var(--text-muted); }
-        .summary-row.total { border-top: 1px solid var(--border-color); padding-top: 10px; margin-bottom: 0; font-weight: 700; color: var(--text-main); font-size: 15px; }
-        .summary-row.total .highlight { color: #ef4444; font-size: 17px; }
+        /* General Form */
+        .calc-group { margin-bottom: 15px; }
+        .calc-header { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 13px; font-weight: 600; }
+        input[type="range"] { width: 100%; height: 8px; border-radius: 4px; background: #e2e8f0; outline: none; -webkit-appearance: none; }
+        input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; border-radius: 50%; background: var(--primary); cursor: pointer; }
+        .summary-box { background: #f8fafc; border-radius: 12px; padding: 14px; border: 1px dashed #cbd5e1; margin-top: 12px; font-size: 13px; }
+        .summary-row { display: flex; justify-content: space-between; margin-bottom: 6px; }
 
-        .form-group { margin-bottom: 16px; }
-        .form-label { display: block; font-size: 13px; font-weight: 600; color: var(--text-main); margin-bottom: 6px; }
+        .form-group { margin-bottom: 14px; }
+        .form-label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 4px; }
         .input-box { position: relative; }
-        .input-box i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 15px; }
-        .form-control {
-            width: 100%; padding: 12px 14px 12px 42px; font-size: 14px;
-            border: 1.5px solid var(--border-color); border-radius: 12px; background: #fff;
-            color: var(--text-main); outline: none; transition: all 0.2s ease;
-        }
-        .form-control:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.1); }
+        .input-box i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #94a3b8; }
+        .form-control { width: 100%; padding: 10px 12px 10px 40px; font-size: 14px; border: 1.5px solid var(--border-color); border-radius: 10px; outline: none; }
 
-        .upload-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .upload-card {
-            border: 2px dashed #cbd5e1; border-radius: 14px; padding: 16px 10px;
-            text-align: center; cursor: pointer; background: #fafafa; position: relative; overflow: hidden;
-        }
-        .upload-card i { font-size: 24px; color: var(--primary); margin-bottom: 6px; }
-        .upload-card span { display: block; font-size: 12px; font-weight: 600; color: var(--text-muted); }
+        .upload-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .upload-card { border: 2px dashed #cbd5e1; border-radius: 12px; padding: 12px; text-align: center; position: relative; background: #fafafa; }
         .upload-card input[type="file"] { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
-        .preview-img { width: 100%; height: 90px; object-fit: cover; border-radius: 8px; display: none; }
+        .preview-img { width: 100%; height: 80px; object-fit: cover; border-radius: 6px; display: none; }
 
-        .btn-submit {
-            width: 100%; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            color: white; border: none; padding: 16px; border-radius: 14px; font-size: 16px; font-weight: 700;
-            cursor: pointer; box-shadow: 0 8px 20px rgba(2, 132, 199, 0.35); display: flex; justify-content: center; align-items: center; gap: 8px;
-        }
-        .btn-submit:active { transform: scale(0.98); }
+        .btn-submit { width: 100%; background: var(--primary); color: white; border: none; padding: 14px; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 10px; }
 
-        .footer-info { text-align: center; font-size: 12px; color: var(--text-muted); margin-top: 15px; display: flex; justify-content: center; gap: 15px; }
-        .spinner { display: none; width: 20px; height: 20px; border: 3px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: #fff; animation: spin 0.8s linear infinite; }
-        @keyframes spin { to { transform: rotate(360deg); } }
+        /* Status Badge */
+        .status-badge { display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 700; }
+        .status-pending { background: #fef3c7; color: #d97706; }
+        .status-approved { background: #d1fae5; color: #059669; }
+        .status-rejected { background: #fee2e2; color: #dc2626; }
     </style>
 </head>
 <body>
 
+    <!-- Nút Menu 3 gạch -->
+    <div class="menu-btn" onclick="toggleSidebar()">
+        <i class="fa-solid fa-bars"></i>
+    </div>
+
+    <!-- Sidebar Overlay & Drawer -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h3 style="font-size: 16px;">VAY ONLINE 24/7</h3>
+            <p style="font-size: 11px; opacity: 0.8;">Hệ thống vay tiêu dùng</p>
+        </div>
+        <ul class="sidebar-menu">
+            <li onclick="openModal('modalProfile')"><i class="fa-solid fa-id-card"></i> Hồ sơ của tôi</li>
+            <li onclick="openModal('modalReferral')"><i class="fa-solid fa-gift"></i> Giới thiệu bạn bè</li>
+            <li onclick="openModal('modalHistory')"><i class="fa-solid fa-clock-rotate-left"></i> Thông tin đã vay</li>
+            <li onclick="openModal('modalPayment')"><i class="fa-solid fa-calendar-check"></i> Ngày thanh toán</li>
+            <li onclick="openModal('modalAdminLogin')" style="margin-top: 20px; border-top: 1px solid #eee; color: #ef4444;">
+                <i class="fa-solid fa-user-shield" style="color: #ef4444;"></i> Quản trị viên
+            </li>
+        </ul>
+    </div>
+
+    <!-- Header chính -->
     <div class="header">
         <h1>VAY TIỀN NHANH ONLINE</h1>
-        <p>Giải ngân siêu tốc trong 5 phút - Không thế chấp</p>
-        <div class="badge-trust">
-            <i class="fa-solid fa-shield-halved"></i> Lãi suất 0% cho khoản vay đầu
-        </div>
+        <p>Duyệt hồ sơ tự động trong 5 phút</p>
     </div>
 
     <div class="container">
         <form id="loanForm" enctype="multipart/form-data">
-
-            <!-- Card 1: Công cụ tính khoản vay -->
+            <!-- Card Tính Lãi -->
             <div class="card">
-                <div class="section-title">
-                    <i class="fa-solid fa-calculator"></i> Tính Toán Khoản Vay
-                </div>
+                <div class="section-title"><i class="fa-solid fa-calculator"></i> Tính Khoản Vay</div>
                 <div class="calc-group">
-                    <div class="calc-header">
-                        <span class="calc-label">Số tiền cần vay</span>
-                        <span class="calc-value" id="amountDisplay">5.000.000 đ</span>
-                    </div>
+                    <div class="calc-header"><span>Số tiền</span><span id="amountDisplay" style="color:var(--primary); font-weight:800;">5.000.000 đ</span></div>
                     <input type="range" id="amountRange" min="1000000" max="50000000" step="1000000" value="5000000">
                 </div>
                 <div class="calc-group">
-                    <div class="calc-header">
-                        <span class="calc-label">Thời hạn vay</span>
-                        <span class="calc-value" id="daysDisplay">30 ngày</span>
-                    </div>
+                    <div class="calc-header"><span>Thời hạn</span><span id="daysDisplay" style="color:var(--primary); font-weight:800;">30 ngày</span></div>
                     <input type="range" id="daysRange" min="7" max="90" step="1" value="30">
                 </div>
                 <div class="summary-box">
-                    <div class="summary-row">
-                        <span>Tiền gốc:</span>
-                        <strong id="summaryPrincipal">5.000.000 đ</strong>
-                    </div>
-                    <div class="summary-row">
-                        <span>Lãi suất tạm tính (12%/năm):</span>
-                        <strong id="summaryInterest" style="color: var(--secondary);">49.315 đ</strong>
-                    </div>
-                    <div class="summary-row total">
-                        <span>Tổng thanh toán:</span>
-                        <span class="highlight" id="summaryTotal">5.049.315 đ</span>
+                    <div class="summary-row"><span>Gốc:</span><strong id="summaryPrincipal">5.000.000 đ</strong></div>
+                    <div class="summary-row"><span>Lãi (12%/năm):</span><strong id="summaryInterest" style="color:var(--secondary)">49.315 đ</strong></div>
+                    <div class="summary-row" style="border-top:1px solid #ddd; padding-top:6px; margin-top:6px; font-weight:700;">
+                        <span>Tổng trả:</span><span id="summaryTotal" style="color:#ef4444; font-size:15px;">5.049.315 đ</span>
                     </div>
                 </div>
             </div>
 
-            <!-- Card 2: Thông tin cá nhân -->
+            <!-- Card Thông tin cá nhân -->
             <div class="card">
-                <div class="section-title">
-                    <i class="fa-solid fa-user-gear"></i> Thông Tin Người Vay
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Họ và tên (theo CCCD)</label>
-                    <div class="input-box">
-                        <i class="fa-solid fa-user"></i>
-                        <input type="text" name="fullName" class="form-control" placeholder="NGUYEN VAN A" required>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Số điện thoại chính chủ</label>
-                    <div class="input-box">
-                        <i class="fa-solid fa-phone"></i>
-                        <input type="tel" name="phone" class="form-control" placeholder="0912345678" pattern="[0-9]{10}" required>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Ngân hàng thụ hưởng</label>
-                    <div class="input-box">
-                        <i class="fa-solid fa-building-columns"></i>
-                        <select name="bankName" class="form-control" required style="padding-left: 42px;">
-                            <option value="">-- Chọn ngân hàng --</option>
-                            <option value="MB Bank">MB Bank (Quân Đội)</option>
-                            <option value="Vietcombank">Vietcombank</option>
-                            <option value="Techcombank">Techcombank</option>
-                            <option value="VPBank">VPBank</option>
-                            <option value="BIDV">BIDV</option>
-                            <option value="Agribank">Agribank</option>
-                            <option value="Vietinbank">Vietinbank</option>
-                            <option value="TPBank">TPBank</option>
-                            <option value="Khac">Ngân hàng khác</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Số tài khoản nhận tiền</label>
-                    <div class="input-box">
-                        <i class="fa-solid fa-credit-card"></i>
-                        <input type="number" name="bankAccount" class="form-control" placeholder="Nhập số tài khoản" required>
-                    </div>
-                </div>
+                <div class="section-title"><i class="fa-solid fa-user"></i> Thông Tin Cá Nhân</div>
+                <div class="form-group"><div class="input-box"><i class="fa-solid fa-user"></i><input type="text" name="fullName" class="form-control" placeholder="Họ và tên theo CCCD" required></div></div>
+                <div class="form-group"><div class="input-box"><i class="fa-solid fa-phone"></i><input type="tel" name="phone" class="form-control" placeholder="Số điện thoại chính chủ" required></div></div>
+                <div class="form-group"><div class="input-box"><i class="fa-solid fa-building-columns"></i>
+                    <select name="bankName" class="form-control" required style="padding-left:40px;">
+                        <option value="">-- Chọn Ngân Hàng --</option>
+                        <option value="MB Bank">MB Bank</option>
+                        <option value="Vietcombank">Vietcombank</option>
+                        <option value="Techcombank">Techcombank</option>
+                        <option value="VPBank">VPBank</option>
+                        <option value="BIDV">BIDV</option>
+                    </select>
+                </div></div>
+                <div class="form-group"><div class="input-box"><i class="fa-solid fa-credit-card"></i><input type="number" name="bankAccount" class="form-control" placeholder="Số tài khoản" required></div></div>
             </div>
 
-            <!-- Card 3: Nâng cấp - THÔNG TIN NGƯỜI THÂN -->
+            <!-- Card Người Thân -->
             <div class="card">
-                <div class="section-title">
-                    <i class="fa-solid fa-users-viewfinder"></i> Người Thân Tham Chiếu
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Mối quan hệ</label>
-                    <div class="input-box">
-                        <i class="fa-solid fa-people-roof"></i>
-                        <select name="relativeRelation" class="form-control" required style="padding-left: 42px;">
-                            <option value="Bố/Mẹ">Bố / Mẹ</option>
-                            <option value="Vợ/Chồng">Vợ / Chồng</option>
-                            <option value="Anh/Chị/Em">Anh / Chị / Em</option>
-                            <option value="Bạn bè/Đồng nghiệp">Bạn bè / Đồng nghiệp</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Họ và tên người thân</label>
-                    <div class="input-box">
-                        <i class="fa-solid fa-user-tag"></i>
-                        <input type="text" name="relativeName" class="form-control" placeholder="NGUYEN VAN B" required>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Số điện thoại người thân</label>
-                    <div class="input-box">
-                        <i class="fa-solid fa-mobile-retro"></i>
-                        <input type="tel" name="relativePhone" class="form-control" placeholder="0987654321" pattern="[0-9]{10}" required>
-                    </div>
-                </div>
+                <div class="section-title"><i class="fa-solid fa-users"></i> Người Thân Tham Chiếu</div>
+                <div class="form-group"><div class="input-box"><i class="fa-solid fa-heart"></i>
+                    <select name="relativeRelation" class="form-control" required style="padding-left:40px;">
+                        <option value="Bố/Mẹ">Bố / Mẹ</option>
+                        <option value="Vợ/Chồng">Vợ / Chồng</option>
+                        <option value="Anh/Chị/Em">Anh / Chị / Em</option>
+                    </select>
+                </div></div>
+                <div class="form-group"><div class="input-box"><i class="fa-solid fa-user-tag"></i><input type="text" name="relativeName" class="form-control" placeholder="Tên người thân" required></div></div>
+                <div class="form-group"><div class="input-box"><i class="fa-solid fa-mobile-retro"></i><input type="tel" name="relativePhone" class="form-control" placeholder="SĐT người thân" required></div></div>
             </div>
 
-            <!-- Card 4: Tải ảnh xác thực -->
+            <!-- Card Upload Ảnh -->
             <div class="card">
-                <div class="section-title">
-                    <i class="fa-solid fa-id-card"></i> Xác Thực Giấy Tờ
-                </div>
+                <div class="section-title"><i class="fa-solid fa-camera"></i> Xác Thực Ảnh</div>
                 <div class="upload-grid">
                     <div class="upload-card">
-                        <div id="contentCccd">
-                            <i class="fa-solid fa-address-card"></i>
-                            <span>Mặt trước CCCD</span>
-                        </div>
-                        <img id="prevCccd" class="preview-img">
-                        <input type="file" name="cccdFront" accept="image/*" required onchange="previewFile(this, 'prevCccd', 'contentCccd')">
+                        <div id="c1"><i class="fa-solid fa-id-card" style="font-size:20px; color:var(--primary);"></i><br><span style="font-size:11px;">Mặt trước CCCD</span></div>
+                        <img id="p1" class="preview-img"><input type="file" name="cccdFront" accept="image/*" required onchange="prev(this,'p1','c1')">
                     </div>
-
                     <div class="upload-card">
-                        <div id="contentSelfie">
-                            <i class="fa-solid fa-camera"></i>
-                            <span>Ảnh chân dung</span>
-                        </div>
-                        <img id="prevSelfie" class="preview-img">
-                        <input type="file" name="selfie" accept="image/*" required onchange="previewFile(this, 'prevSelfie', 'contentSelfie')">
+                        <div id="c2"><i class="fa-solid fa-user" style="font-size:20px; color:var(--primary);"></i><br><span style="font-size:11px;">Ảnh chân dung</span></div>
+                        <img id="p2" class="preview-img"><input type="file" name="selfie" accept="image/*" required onchange="prev(this,'p2','c2')">
                     </div>
                 </div>
             </div>
 
-            <button type="submit" class="btn-submit" id="submitBtn">
-                <div class="spinner" id="spinner"></div>
-                <span id="btnText">NỘP HỒ SƠ ĐĂNG KÝ VAY</span>
-            </button>
+            <button type="submit" class="btn-submit" id="subBtn">NỘP HỒ SƠ VAY</button>
         </form>
+    </div>
 
-        <div class="footer-info">
-            <span><i class="fa-solid fa-lock" style="color: #10b981;"></i> Bảo mật 256-bit</span>
-            <span><i class="fa-solid fa-bolt" style="color: #f59e0b;"></i> Duyệt tự động</span>
+    <!-- MODAL 1: HỒ SƠ & TRẠNG THÁI -->
+    <div class="modal" id="modalProfile">
+        <div class="modal-content">
+            <i class="fa-solid fa-xmark close-modal" onclick="closeModal('modalProfile')"></i>
+            <h3 style="margin-bottom:15px;"><i class="fa-solid fa-search"></i> Tra Cứu Trạng Thái Hồ Sơ</h3>
+            <div class="form-group">
+                <input type="text" id="searchQuery" class="form-control" placeholder="Nhập SĐT hoặc Mã hồ sơ vay..." style="padding-left:12px;">
+            </div>
+            <button class="btn-submit" style="padding:10px; font-size:13px;" onclick="checkStatus()">Tra cứu ngay</button>
+            <div id="profileResult" style="margin-top:15px;"></div>
+        </div>
+    </div>
+
+    <!-- MODAL 2: GIỚI THIỆU BẠN BÈ -->
+    <div class="modal" id="modalReferral">
+        <div class="modal-content">
+            <i class="fa-solid fa-xmark close-modal" onclick="closeModal('modalReferral')"></i>
+            <h3><i class="fa-solid fa-gift" style="color:#eab308;"></i> Giới Thiệu Nhận 100k</h3>
+            <p style="font-size:13px; color:#64748b; margin:10px 0;">Chia sẻ đường link dưới đây cho bạn bè để nhận hoa hồng 100.000đ khi họ được giải ngân thành công!</p>
+            <div class="form-group">
+                <input type="text" id="refLink" class="form-control" readonly style="padding-left:12px;" value="https://app-vay-online.onrender.com/?ref=12345">
+            </div>
+            <button class="btn-submit" style="background:#10b981; padding:10px;" onclick="copyRef()">Sao chép liên kết</button>
+        </div>
+    </div>
+
+    <!-- MODAL 3 & 4: LỊCH SỬ VAY & NGÀY THANH TOÁN -->
+    <div class="modal" id="modalHistory">
+        <div class="modal-content">
+            <i class="fa-solid fa-xmark close-modal" onclick="closeModal('modalHistory')"></i>
+            <h3><i class="fa-solid fa-clock-rotate-left"></i> Thông Tin Đã Vay</h3>
+            <p style="font-size:13px; color:#64748b; margin-top:10px;">Vui lòng mở mục <b>"Hồ sơ của tôi"</b> và tra cứu bằng Số điện thoại để xem lại toàn bộ thông tin chi tiết!</p>
+        </div>
+    </div>
+    <div class="modal" id="modalPayment">
+        <div class="modal-content">
+            <i class="fa-solid fa-xmark close-modal" onclick="closeModal('modalPayment')"></i>
+            <h3><i class="fa-solid fa-calendar-check"></i> Ngày Thanh Toán Khoản Vay</h3>
+            <p style="font-size:13px; color:#64748b; margin-top:10px;">Ngày thanh toán sẽ được tính tự động dựa trên thời hạn vay bạn đăng ký. Bạn có thể tra cứu lịch trả trong mục <b>"Hồ sơ của tôi"</b>.</p>
+        </div>
+    </div>
+
+    <!-- MODAL 5: DÀNH CHO QUẢN TRỊ VIÊN -->
+    <div class="modal" id="modalAdminLogin">
+        <div class="modal-content">
+            <i class="fa-solid fa-xmark close-modal" onclick="closeModal('modalAdminLogin')"></i>
+            <h3><i class="fa-solid fa-user-shield" style="color:#ef4444;"></i> Đăng Nhập Quản Trị Viên</h3>
+            <div class="form-group" style="margin-top:15px;">
+                <input type="password" id="adminPass" class="form-control" placeholder="Nhập mật khẩu Admin (mặc định 123456)" style="padding-left:12px;">
+            </div>
+            <button class="btn-submit" style="background:#ef4444; padding:10px;" onclick="adminLogin()">Đăng Nhập Quản Lý</button>
+        </div>
+    </div>
+
+    <div class="modal" id="modalAdminPanel">
+        <div class="modal-content" style="max-width:600px;">
+            <i class="fa-solid fa-xmark close-modal" onclick="closeModal('modalAdminPanel')"></i>
+            <h3><i class="fa-solid fa-list-check"></i> Danh Sách Hồ Sơ Vay</h3>
+            <div id="adminList" style="margin-top:15px;"></div>
         </div>
     </div>
 
     <script>
+        // Toggle Sidebar
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+            document.getElementById('sidebarOverlay').classList.toggle('active');
+        }
+        function openModal(id) {
+            toggleSidebar();
+            document.getElementById(id).style.display = 'flex';
+        }
+        function closeModal(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+
+        // Tính lãi tự động
         const amountRange = document.getElementById('amountRange');
         const daysRange = document.getElementById('daysRange');
-        const amountDisplay = document.getElementById('amountDisplay');
-        const daysDisplay = document.getElementById('daysDisplay');
-        const summaryPrincipal = document.getElementById('summaryPrincipal');
-        const summaryInterest = document.getElementById('summaryInterest');
-        const summaryTotal = document.getElementById('summaryTotal');
-
-        const ANNUAL_INTEREST_RATE = 0.12;
-
-        function updateCalculator() {
-            const amount = parseInt(amountRange.value);
-            const days = parseInt(daysRange.value);
-            const interest = Math.round(amount * (ANNUAL_INTEREST_RATE / 365) * days);
-            const total = amount + interest;
-
-            const formatVND = (num) => new Intl.NumberFormat('vi-VN').format(num) + ' đ';
-
-            amountDisplay.innerText = formatVND(amount);
-            daysDisplay.innerText = days + ' ngày';
-            summaryPrincipal.innerText = formatVND(amount);
-            summaryInterest.innerText = formatVND(interest);
-            summaryTotal.innerText = formatVND(total);
+        function calc() {
+            const a = parseInt(amountRange.value), d = parseInt(daysRange.value);
+            const interest = Math.round(a * (0.12 / 365) * d);
+            const fmt = (n) => new Intl.NumberFormat('vi-VN').format(n) + ' đ';
+            document.getElementById('amountDisplay').innerText = fmt(a);
+            document.getElementById('daysDisplay').innerText = d + ' ngày';
+            document.getElementById('summaryPrincipal').innerText = fmt(a);
+            document.getElementById('summaryInterest').innerText = fmt(interest);
+            document.getElementById('summaryTotal').innerText = fmt(a + interest);
         }
+        amountRange.addEventListener('input', calc);
+        daysRange.addEventListener('input', calc);
 
-        amountRange.addEventListener('input', updateCalculator);
-        daysRange.addEventListener('input', updateCalculator);
-        updateCalculator();
-
-        function previewFile(input, imgId, contentId) {
-            const file = input.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
+        function prev(input, imgId, cId) {
+            if (input.files[0]) {
+                const r = new FileReader();
+                r.onload = (e) => {
                     document.getElementById(imgId).src = e.target.result;
                     document.getElementById(imgId).style.display = 'block';
-                    document.getElementById(contentId).style.display = 'none';
+                    document.getElementById(cId).style.display = 'none';
                 }
-                reader.readAsDataURL(file);
+                r.readAsDataURL(input.files[0]);
             }
         }
 
-        document.getElementById('loanForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const submitBtn = document.getElementById('submitBtn');
-            const btnText = document.getElementById('btnText');
-            const spinner = document.getElementById('spinner');
-
-            submitBtn.disabled = true;
-            btnText.innerText = "Đang xử lý hồ sơ...";
-            spinner.style.display = "block";
-
-            const formData = new FormData(this);
-            formData.append('amount', amountRange.value);
-            formData.append('days', daysRange.value);
-
-            try {
-                const response = await fetch('/api/submit-loan', { method: 'POST', body: formData });
-                const result = await response.json();
-
-                if (result.success) {
-                    alert('🎉 Đăng ký thành công! Mã hồ sơ: ' + result.loanId);
-                    this.reset();
-                    location.reload();
-                } else {
-                    alert('❌ Có lỗi: ' + result.message);
-                }
-            } catch (error) {
-                alert('❌ Lỗi kết nối máy chủ!');
-            } finally {
-                submitBtn.disabled = false;
-                btnText.innerText = "NỘP HỒ SƠ ĐĂNG KÝ VAY";
-                spinner.style.display = "none";
+        // Tra cứu hồ sơ (Khách hàng)
+        async function checkStatus() {
+            const q = document.getElementById('searchQuery').value.trim();
+            if(!q) return alert('Vui lòng nhập SĐT hoặc Mã vay');
+            const res = await fetch('/api/check-status?query=' + encodeURIComponent(q));
+            const data = await res.json();
+            const resDiv = document.getElementById('profileResult');
+            
+            if(data.data.length === 0) {
+                resDiv.innerHTML = '<p style="color:#ef4444; font-size:13px;">Không tìm thấy hồ sơ nào!</p>';
+                return;
             }
-        });
-    </script>
-</body>
-                                                             </html>
-                                                             
+
+            let html = '';
+            data.data.forEach(item => {
+                let badgeClass = 'status-pending';
+                if(item.status === 'Đã duyệt') badgeClass = 'status-approved';
+                if(item.status === 'Từ chối') badgeClass = 'status-rejected';
+
+                html += `
+                    <div style="border:1px solid #e2e8f0; border-radius:10px; padding:12px; margin-bottom:10px; font-size:13px;">
+                        <div><b>Mã hồ sơ:</b> #${item.loanId}</div>
+                        <div><b>Họ tên:</b> ${item.fullName}</div>
+                        <div><b>Số tiền:</b> ${new Intl.NumberFormat('vi-VN').format(item.amount)} đ (${item.days} ngày)</div>
+                        <div><b>Hạn thanh toán:</b> ${item.dueDate}</div>
