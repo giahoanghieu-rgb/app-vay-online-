@@ -1,4 +1,4 @@
-// Quản lý Sidebar Menu
+// Sidebar Control
 function openSidebar() {
     document.getElementById('sidebar').classList.add('active');
     document.getElementById('sidebarOverlay').style.display = 'block';
@@ -18,7 +18,13 @@ function closeModal(id) {
     document.getElementById(id).style.display = 'none';
 }
 
-// Xử lý Tính Toán Lãi Suất
+// Chuyển đổi giữa Đăng Nhập & Đăng Ký
+function switchAuthModal(fromModal, toModal) {
+    closeModal(fromModal);
+    openModal(toModal);
+}
+
+// Tính Toán Khoản Vay
 document.addEventListener('DOMContentLoaded', function() {
     const amountRange = document.getElementById('amountRange');
     const daysRange = document.getElementById('daysRange');
@@ -41,7 +47,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// Xem trước ảnh upload
+// Xem trước ảnh Upload
 function prev(input, imgId, cId) {
     if (input.files && input.files[0]) {
         const r = new FileReader();
@@ -54,7 +60,66 @@ function prev(input, imgId, cId) {
     }
 }
 
-// Tra cứu thông tin khoản vay của khách hàng
+// Xử lý Form Đăng Ký Tài Khoản
+document.addEventListener('DOMContentLoaded', function() {
+    const registerForm = document.getElementById('registerForm');
+    if (registerForm) {
+        registerForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = document.getElementById('regName').value;
+            const phone = document.getElementById('regPhone').value;
+            const pass = document.getElementById('regPass').value;
+            const passConfirm = document.getElementById('regPassConfirm').value;
+
+            if (pass !== passConfirm) {
+                return alert('❌ Mật khẩu xác nhận không trùng khớp!');
+            }
+
+            // Lưu thông tin người dùng giả lập
+            localStorage.setItem('userPhone', phone);
+            localStorage.setItem('userName', name);
+
+            alert('🎉 Đăng ký tài khoản thành công!');
+            closeModal('modalRegister');
+            updateUserUI(name);
+        });
+    }
+
+    // Xử lý Form Đăng Nhập Tài Khoản
+    const loginForm = document.getElementById('loginForm');
+    if (loginForm) {
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const phone = document.getElementById('loginPhone').value;
+            const name = localStorage.getItem('userName') || 'Khách hàng';
+
+            alert('🎉 Đăng nhập thành công!');
+            closeModal('modalLogin');
+            updateUserUI(name);
+        });
+    }
+
+    // Kiểm tra đăng nhập cũ
+    const savedName = localStorage.getItem('userName');
+    if (savedName) {
+        updateUserUI(savedName);
+    }
+});
+
+function updateUserUI(name) {
+    document.getElementById('authButtons').style.display = 'none';
+    const userInfo = document.getElementById('userInfo');
+    userInfo.style.display = 'flex';
+    document.getElementById('userNameDisplay').innerText = name;
+}
+
+function logout() {
+    localStorage.removeItem('userName');
+    localStorage.removeItem('userPhone');
+    location.reload();
+}
+
+// Tra Cứu Hồ Sơ
 async function checkStatus() {
     const q = document.getElementById('searchQuery').value.trim();
     if(!q) return alert('Vui lòng nhập SĐT hoặc Mã vay');
@@ -82,7 +147,7 @@ async function checkStatus() {
     } catch(e) { alert('Lỗi tra cứu!'); }
 }
 
-// Đăng nhập và quản lý dành cho Admin
+// Admin Logic
 let currentAdminPass = '';
 async function adminLogin() {
     const pass = document.getElementById('adminPass').value;
@@ -140,7 +205,7 @@ async function updateStatus(loanId, status) {
     } catch(e) { alert('Lỗi xử lý!'); }
 }
 
-// Xử lý nộp Form
+// Nộp Hồ Sơ Vay
 document.addEventListener('DOMContentLoaded', function() {
     const loanForm = document.getElementById('loanForm');
     if (loanForm) {
@@ -165,4 +230,4 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
-              
+                
