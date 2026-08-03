@@ -8,8 +8,8 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // === THAY THÔNG TIN TELEGRAM CỦA BẠN VÀO 2 DÒNG DƯỚI ===
-const TELEGRAM_BOT_TOKEN = '7890123456:AAHxXXXXXXXXXXXXXX'; // Thay Token ở Bước 1
-const TELEGRAM_CHAT_ID = '123456789'; // Thay Chat ID ở Bước 1
+const TELEGRAM_BOT_TOKEN = '8999331195:AAFgHthGvHsksplYrygVPrRFPj3JY9ltHL4'; // Thay Token ở Bước 1
+const TELEGRAM_CHAT_ID = '8999331195'; // Thay Chat ID ở Bước 1
 
 if (!fs.existsSync('./uploads')) {
     fs.mkdirSync('./uploads');
