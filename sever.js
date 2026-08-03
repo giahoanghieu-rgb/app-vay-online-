@@ -74,5 +74,9 @@ app.post('/api/submit-loan', upload.fields([
         res.status(500).json({ success: false, message: 'Lỗi server' });
     }
 });
-
+// Khai báo đường dẫn trả về trang chủ index.html
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+    
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
