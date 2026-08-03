@@ -10,7 +10,7 @@ const PORT = process.env.PORT || 3000;
 
 // === THAY TOKEN & CHAT ID TELEGRAM Ở 2 DÒNG NÀY ===
 const TELEGRAM_BOT_TOKEN = '8999331195:AAFgHthGvHsksplYrygVPrRFPj3JY9ltHL4';
-const TELEGRAM_CHAT_ID = '8999331195';
+const TELEGRAM_CHAT_ID = '5990088732';
 
 // Tạo thư mục uploads nếu chưa có
 if (!fs.existsSync('./uploads')) {
