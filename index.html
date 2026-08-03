@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vay Nhanh Online</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
+        body { background: #f8fafc; color: #0f172a; padding: 12px; }
+        header { background: #fff; padding: 12px; text-align: center; font-weight: bold; color: #2563eb; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border-radius: 8px; margin-bottom: 12px; }
+        .card { background: #fff; border-radius: 12px; padding: 16px; margin-bottom: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .title { font-weight: bold; margin-bottom: 12px; font-size: 15px; }
+        .form-group { margin-bottom: 10px; }
+        .form-group label { display: block; font-size: 12px; font-weight: 600; color: #64748b; margin-bottom: 4px; }
+        .form-control { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; }
+        .kyc-box { border: 2px dashed #cbd5e1; padding: 12px; text-align: center; border-radius: 8px; background: #f1f5f9; display: block; cursor: pointer; }
+        .kyc-box input { display: none; }
+        .btn { width: 100%; background: #2563eb; color: #fff; border: none; padding: 12px; border-radius: 8px; font-weight: bold; font-size: 15px; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <header>⚡ QUICK365 LENDING</header>
+
+    <div class="card">
+        <div class="title">💰 Chọn Khoản Vay</div>
+        <div class="form-group">
+            <label>Số tiền (VNĐ):</label>
+            <input type="number" class="form-control" id="amount" value="1000000" step="500000">
+        </div>
+        <div class="form-group">
+            <label>Thời hạn (Ngày):</label>
+            <input type="number" class="form-control" id="days" value="14">
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="title">🪪 Xác Minh eKYC</div>
+        <form id="loanForm" onsubmit="submitForm(event)">
+            <div class="form-group">
+                <label>Họ và tên theo CCCD:</label>
+                <input type="text" class="form-control" id="fullName" required placeholder="NGUYEN VAN A">
+            </div>
+            <div class="form-group">
+                <label>Số điện thoại chính chủ:</label>
+                <input type="tel" class="form-control" id="phone" required placeholder="0901234567">
+            </div>
+            <div class="form-group">
+                <label>Chụp Mặt trước CCCD:</label>
+                <label class="kyc-box">
+                    <span id="cccdText">📷 Bấm để chụp CCCD</span>
+                    <input type="file" id="cccdFront" accept="image/*" capture="environment" onchange="document.getElementById('cccdText').innerText='✅ Đã chọn CCCD'" required>
+                </label>
+            </div>
+            <div class="form-group">
+                <label>Chụp Chân dung (Selfie):</label>
+                <label class="kyc-box">
+                    <span id="selfieText">🤳 Bấm để chụp mặt</span>
+                    <input type="file" id="selfie" accept="image/*" capture="user" onchange="document.getElementById('selfieText').innerText='✅ Đã chụp mặt'" required>
+                </label>
+            </div>
+            <div class="form-group">
+                <label>Tên Ngân hàng & Số tài khoản:</label>
+                <input type="text" class="form-control" id="bankName" placeholder="Tên NH (MB, VCB...)" required style="margin-bottom: 6px;">
+                <input type="text" class="form-control" id="bankAccount" placeholder="Số tài khoản nhận tiền" required>
+            </div>
+            <button type="submit" class="btn" id="btnBtn">GỬI HỒ SƠ DUYỆT</button>
+        </form>
+    </div>
+
+    <script>
+        async function submitForm(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btnBtn');
+            btn.disabled = true; btn.innerText = 'Đang xử lý...';
+
+            const formData = new FormData();
+            formData.append('amount', document.getElementById('amount').value);
+            formData.append('days', document.getElementById('days').value);
+            formData.append('fullName', document.getElementById('fullName').value);
+            formData.append('phone', document.getElementById('phone').value);
+            formData.append('bankName', document.getElementById('bankName').value);
+            formData.append('bankAccount', document.getElementById('bankAccount').value);
+            formData.append('cccdFront', document.getElementById('cccdFront').files[0]);
+            formData.append('selfie', document.getElementById('selfie').files[0]);
+
+            try {
+                const res = await fetch('/api/submit-loan', { method: 'POST', body: formData });
+                const data = await res.json();
+                if(data.success) {
+                    alert('Đã gửi hồ sơ thành công! Mã hồ sơ: ' + data.loanId);
+                    location.reload();
+                } else alert('Có lỗi xảy ra');
+            } catch(err) { alert('Lỗi kết nối máy chủ!'); }
+            finally { btn.disabled = false; btn.innerText = 'GỬI HỒ SƠ DUYỆT'; }
+        }
+    </script>
+</body>
+              </html>
+                  
