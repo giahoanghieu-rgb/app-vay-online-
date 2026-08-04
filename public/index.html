@@ -3,165 +3,180 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vay Tiền Nhanh Online 24/7</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>Vay Online 24/7 - Hạn Mức Tối Đa</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
-    <!-- NAVBAR -->
-    <div class="top-navbar">
-        <div style="display:flex; align-items:center; gap:12px;">
-            <i class="fa-solid fa-bars" onclick="openSidebar()" style="font-size:18px; cursor:pointer;"></i>
-            <a href="#" class="brand-logo"><i class="fa-solid fa-bolt"></i><span>VAYONLINE</span></a>
+    <!-- THANH MENU ĐIỀU HƯỚNG -->
+    <nav class="navbar">
+        <div class="logo">⚡ VAY247</div>
+        <div class="menu-links">
+            <button class="nav-btn active" onclick="switchTab('vay')">Tạo hồ sơ vay</button>
+            <button class="nav-btn" onclick="switchTab('tracuu')">Tra cứu hồ sơ</button>
+            <button class="nav-btn" onclick="switchTab('gioithieu')">Giới thiệu</button>
+            <button class="nav-btn" onclick="switchTab('hotro')">Hỗ trợ</button>
         </div>
-        
-        <div class="auth-buttons" id="authButtons">
-            <button class="btn-auth-outline" onclick="openModal('modalLogin')">Đăng Nhập</button>
-            <button class="btn-auth-fill" onclick="openModal('modalRegister')">Đăng Ký</button>
-        </div>
-    </div>
+    </nav>
 
-    <!-- SIDEBAR MENU -->
-    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
-    <div class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <h3>VAY ONLINE 24/7</h3>
-            <p style="font-size: 11px; opacity: 0.8;">Hệ thống vay tiêu dùng uy tín</p>
-        </div>
-        <ul class="sidebar-menu">
-            <li onclick="openModal('modalRank')"><i class="fa-solid fa-crown" style="color:#f59e0b;"></i> Cấp bậc thành viên</li>
-            <li onclick="openModal('modalProfile')"><i class="fa-solid fa-id-card"></i> Tra cứu hồ sơ</li>
-            <li onclick="openModal('modalAbout')"><i class="fa-solid fa-circle-info"></i> Giới thiệu website</li>
-            <li onclick="openModal('modalSupport')"><i class="fa-solid fa-headset" style="color:#10b981;"></i> Hỗ trợ 24/7</li>
-            <li onclick="openModal('modalAdminLogin')" style="margin-top:20px; background:#f8fafc; border-top:1px solid #e2e8f0;"><i class="fa-solid fa-user-shield" style="color:#ef4444;"></i> Đăng nhập Admin</li>
-        </ul>
-    </div>
-
-    <!-- HERO HEADER -->
-    <div class="hero-header">
-        <h1>GIẢI NGÂN SIÊU TỐC TRONG 5 PHÚT</h1>
-        <p>Thủ tục đơn giản - Không thế chấp - Hạn mức nâng cấp tự động</p>
-    </div>
-
-    <!-- MAIN FORM -->
     <div class="container">
-        <form id="loanForm" enctype="multipart/form-data">
-            <div class="card">
-                <div class="section-title"><i class="fa-solid fa-calculator"></i> Tính Khoản Vay</div>
-                
-                <div class="calc-group">
-                    <div class="calc-header"><span>Số tiền vay</span><span id="amountDisplay" style="color:var(--primary); font-weight:800;">500.000 đ</span></div>
-                    <input type="range" id="amountRange" min="100000" max="500000" step="50000" value="500000">
-                    <div class="limit-warning">
-                        <i class="fa-solid fa-lock"></i> Thành viên mới giới hạn vay tối đa <b>500.000 VNĐ</b>. Thanh toán từ 3-5 lần để mở khóa hạn mức tới 50.000.000đ!
-                    </div>
-                </div>
+        <!-- TAB 1: FORM ĐĂNG KÝ VAY -->
+        <div id="tab-vay" class="tab-content active">
+            <h2>Nộp Hồ Sơ Vay Online</h2>
+            <form id="loanForm" onsubmit="submitLoan(event)">
+                <h3>1. Thông tin khoản vay</h3>
+                <label>Họ và tên người vay:</label>
+                <input type="text" id="fullName" required placeholder="Nguyễn Văn A">
 
-                <div class="calc-group">
-                    <div class="calc-header"><span>Thời hạn vay</span><span id="daysDisplay" style="color:var(--primary); font-weight:800;">30 ngày</span></div>
-                    <input type="range" id="daysRange" min="7" max="90" step="1" value="30">
-                </div>
+                <label>Số điện thoại:</label>
+                <input type="tel" id="phone" required placeholder="09xxxxxxxx">
 
-                <div class="summary-box">
-                    <div class="summary-row"><span>Tiền gốc:</span><strong id="summaryPrincipal">500.000 đ</strong></div>
-                    <div class="summary-row"><span>Lãi suất (12%/năm):</span><strong id="summaryInterest" style="color:var(--secondary)">4.931 đ</strong></div>
-                    <div class="summary-row" style="border-top:1px solid #ddd; padding-top:6px; margin-top:6px; font-weight:700;">
-                        <span>Tổng thanh toán:</span><span id="summaryTotal" style="color:#ef4444; font-size:15px;">504.931 đ</span>
-                    </div>
-                </div>
-            </div>
+                <label>Số tiền vay (Khách mới tối đa 500.000đ):</label>
+                <input type="number" id="amount" value="500000" min="100000" max="10000000" required>
 
-            <div class="card">
-                <div class="section-title"><i class="fa-solid fa-user"></i> Thông Tin Cá Nhân</div>
-                <div class="form-group"><div class="input-box"><i class="fa-solid fa-user"></i><input type="text" name="fullName" class="form-control" placeholder="Họ và tên theo CCCD" required></div></div>
-                <div class="form-group"><div class="input-box"><i class="fa-solid fa-phone"></i><input type="tel" name="phone" class="form-control" placeholder="Số điện thoại" required></div></div>
-                <div class="form-group"><div class="input-box"><i class="fa-solid fa-building-columns"></i>
-                    <select name="bankName" class="form-control" required style="padding-left:40px;">
-                        <option value="MB Bank">MB Bank</option>
-                        <option value="Vietcombank">Vietcombank</option>
-                        <option value="Techcombank">Techcombank</option>
-                    </select>
-                </div></div>
-                <div class="form-group"><div class="input-box"><i class="fa-solid fa-credit-card"></i><input type="number" name="bankAccount" class="form-control" placeholder="Số tài khoản ngân hàng" required></div></div>
-            </div>
+                <label>Thời hạn vay (Ngày):</label>
+                <select id="days">
+                    <option value="7">7 ngày</option>
+                    <option value="14">14 ngày</option>
+                    <option value="30">30 ngày</option>
+                </select>
 
-            <button type="submit" class="btn-submit" id="subBtn">NỘP HỒ SƠ VAY</button>
-        </form>
-    </div>
+                <label>Tên ngân hàng nhận tiền:</label>
+                <input type="text" id="bankName" required placeholder="Vietcombank, MB Bank...">
 
-    <!-- POPUP 1: CẤP BẬC THÀNH VIÊN -->
-    <div class="modal" id="modalRank">
-        <div class="modal-content">
-            <i class="fa-solid fa-xmark close-modal" onclick="closeModal('modalRank')"></i>
-            <h3 style="margin-bottom:15px;"><i class="fa-solid fa-crown" style="color:#f59e0b;"></i> Cấp Bậc Thành Viên</h3>
-            
-            <div class="vip-card-banner">
-                <div class="vip-header">
-                    <span style="font-size:12px; opacity:0.8;">Hạng hiện tại</span>
-                    <span class="vip-badge">THÀNH VIÊN MỚI</span>
-                </div>
-                <h2 style="font-size:20px; font-weight:800; color:#f59e0b; margin-top:6px;">HẠNG ĐỒNG (500K)</h2>
-                <p style="font-size:11px; opacity:0.8; margin-top:4px;">Vay và thanh toán đủ 3–5 lần để lên Hạng Bạc (Hạn mức 5M)</p>
-                <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:20%;"></div></div>
-            </div>
+                <label>Số tài khoản ngân hàng:</label>
+                <input type="text" id="bankAccount" required placeholder="10xxxxxxxxx">
 
-            <ul style="font-size:12px; line-height:1.8; color:#475569; padding-left:15px;">
-                <li><b>Hạng Đồng (0 lần):</b> Vay tối đa 500.000 VNĐ.</li>
-                <li><b>Hạng Bạc (3-5 lần vay):</b> Mở khóa hạn mức <b>5.000.000 VNĐ</b>.</li>
-                <li><b>Hạng Vàng (6-10 lần vay):</b> Mở khóa hạn mức <b>15.000.000 VNĐ</b>.</li>
-                <li><b>Hạng Kim Cương (>10 lần vay):</b> Mở khóa hạn mức <b>50.000.000 VNĐ</b>.</li>
-            </ul>
-        </div>
-    </div>
+                <!-- THÔNG TIN NGƯỜI THÂN -->
+                <h3 class="section-title">2. Thông tin người tham chiếu (Bắt buộc)</h3>
+                <label>Mối quan hệ với người thân:</label>
+                <select id="relativeRelation" required>
+                    <option value="Bố/Mẹ">Bố / Mẹ</option>
+                    <option value="Anh/Chị/Em">Anh / Chị / Em</option>
+                    <option value="Vợ/Chồng">Vợ / Chồng</option>
+                    <option value="Bạn bè">Bạn bè</option>
+                </select>
 
-    <!-- POPUP 2: ĐĂNG NHẬP ADMINISTRATOR -->
-    <div class="modal" id="modalAdminLogin">
-        <div class="modal-content">
-            <i class="fa-solid fa-xmark close-modal" onclick="closeModal('modalAdminLogin')"></i>
-            <h3 style="text-align:center; margin-bottom:15px;"><i class="fa-solid fa-user-shield" style="color:#ef4444;"></i> Đăng Nhập Administrator</h3>
-            <form onsubmit="loginAdmin(event)">
-                <div class="form-group"><div class="input-box"><i class="fa-solid fa-user"></i><input type="text" id="adminUser" class="form-control" placeholder="Tài khoản Admin" required></div></div>
-                <div class="form-group"><div class="input-box"><i class="fa-solid fa-lock"></i><input type="password" id="adminPass" class="form-control" placeholder="Mật khẩu" required></div></div>
-                <button type="submit" class="btn-submit" style="background:#ef4444;">ĐĂNG NHẬP ADMIN</button>
+                <label>Họ và tên người thân:</label>
+                <input type="text" id="relativeName" required placeholder="Nguyễn Văn B">
+
+                <label>Số điện thoại người thân:</label>
+                <input type="tel" id="relativePhone" required placeholder="09xxxxxxxx">
+
+                <button type="submit" class="btn-submit">NỘP HỒ SƠ VAY</button>
             </form>
         </div>
-    </div>
 
-    <!-- POPUP 3: GIAO DIỆN ADMIN PANEL (QUẢN TRỊ VIÊN) -->
-    <div class="modal" id="modalAdminPanel">
-        <div class="modal-content wide">
-            <i class="fa-solid fa-xmark close-modal" onclick="closeModal('modalAdminPanel')"></i>
-            <h3 style="margin-bottom:15px;"><i class="fa-solid fa-sliders"></i> Bảng Quản Trị Hệ Thống</h3>
-
-            <div class="admin-tabs">
-                <button class="admin-tab-btn active" id="tab-btn-users" onclick="switchAdminTab('users')">Tài khoản người dùng</button>
-                <button class="admin-tab-btn" id="tab-btn-loans" onclick="switchAdminTab('loans')">Các khoản vay</button>
-                <button class="admin-tab-btn" id="tab-btn-records" onclick="switchAdminTab('records')">Hồ sơ vay</button>
+        <!-- TAB 2: TRA CỨU HỒ SƠ -->
+        <div id="tab-tracuu" class="tab-content">
+            <h2>Tra Cứu Hồ Sơ Vay</h2>
+            <div class="search-box">
+                <input type="tel" id="searchPhone" placeholder="Nhập số điện thoại đã đăng ký vay">
+                <button onclick="searchLoan()" class="btn-search">Tìm kiếm</button>
             </div>
+            <div id="searchResult" class="result-box"></div>
+        </div>
 
-            <div class="admin-tab-content" id="admin-tab-users">Đang tải danh sách người dùng...</div>
-            <div class="admin-tab-content" id="admin-tab-loans" style="display:none;">Đang tải danh sách khoản vay...</div>
-            <div class="admin-tab-content" id="admin-tab-records" style="display:none;">Đang tải danh sách hồ sơ...</div>
+        <!-- TAB 3: GIỚI THIỆU WEBSITE -->
+        <div id="tab-gioithieu" class="tab-content">
+            <h2>Giới Thiệu Website</h2>
+            <div class="info-card">
+                <p><b>VAY247</b> là nền tảng kết nối tài chính nhanh chóng, minh bạch và an toàn hàng đầu.</p>
+                <ul>
+                    <li>🚀 Xét duyệt tự động trong 5 phút.</li>
+                    <li>🔒 Bảo mật thông tin khách hàng tuyệt đối.</li>
+                    <li>💎 Hệ thống thăng cấp hạn mức tự động cho khách hàng uy tín.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- TAB 4: HỖ TRỢ KỸ THUẬT -->
+        <div id="tab-hotro" class="tab-content">
+            <h2>Trung Tâm Hỗ Trợ</h2>
+            <div class="info-card">
+                <p>Nếu bạn cần giải đáp thắc mắc hoặc tư vấn khoản vay, vui lòng liên hệ:</p>
+                <p>📞 <b>Hotline:</b> 1900 xxxx (8:00 - 22:00)</p>
+                <p>💬 <b>Zalo Hỗ Trợ:</b> 09xxxxxxxx</p>
+                <p>📧 <b>Email:</b> hotro@vay247.com</p>
+            </div>
         </div>
     </div>
 
-    <!-- CÁC POPUP KHÁC -->
-    <div class="modal" id="modalRegister">
-        <div class="modal-content">
-            <i class="fa-solid fa-xmark close-modal" onclick="closeModal('modalRegister')"></i>
-            <h3 style="text-align:center; margin-bottom:15px;">Đăng Ký Tài Khoản</h3>
-            <form id="registerForm">
-                <div class="form-group"><div class="input-box"><i class="fa-solid fa-user"></i><input type="text" id="regName" class="form-control" placeholder="Họ và tên" required></div></div>
-                <div class="form-group"><div class="input-box"><i class="fa-solid fa-phone"></i><input type="tel" id="regPhone" class="form-control" placeholder="Số điện thoại" required></div></div>
-                <div class="form-group"><div class="input-box"><i class="fa-solid fa-lock"></i><input type="password" id="regPass" class="form-control" placeholder="Mật khẩu" required></div></div>
-                <button type="submit" class="btn-submit">ĐĂNG KÝ NGAY</button>
-            </form>
-        </div>
-    </div>
+    <script>
+        // XỬ LÝ CHUYỂN TAB MỚI VÀ MƯỢT MÀ
+        function switchTab(tabName) {
+            // Ẩn tất cả nội dung tab
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            // Bỏ active tất cả nút bấm
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
 
-    <script src="script.js"></script>
+            // Hiện tab được chọn
+            const targetTab = document.getElementById('tab-' + tabName);
+            if (targetTab) {
+                targetTab.classList.add('active');
+            }
+            event.target.classList.add('active');
+        }
+
+        // GỬI HỒ SƠ VAY
+        async function submitLoan(e) {
+            e.preventDefault();
+            const formData = {
+                fullName: document.getElementById('fullName').value,
+                phone: document.getElementById('phone').value,
+                amount: document.getElementById('amount').value,
+                days: document.getElementById('days').value,
+                bankName: document.getElementById('bankName').value,
+                bankAccount: document.getElementById('bankAccount').value,
+                relativeRelation: document.getElementById('relativeRelation').value,
+                relativeName: document.getElementById('relativeName').value,
+                relativePhone: document.getElementById('relativePhone').value
+            };
+
+            const res = await fetch('/api/submit-loan', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            });
+
+            const data = await res.json();
+            if (data.success) {
+                alert('Tạo hồ sơ thành công! Mã hồ sơ của bạn là: ' + data.loanId);
+                document.getElementById('loanForm').reset();
+            } else {
+                alert(data.message);
+            }
+        }
+
+        // TRA CỨU HỒ SƠ
+        async function searchLoan() {
+            const phone = document.getElementById('searchPhone').value;
+            if (!phone) return alert('Vui lòng nhập số điện thoại!');
+
+            const res = await fetch('/api/search-loan/' + phone);
+            const data = await res.json();
+            const resultDiv = document.getElementById('searchResult');
+
+            if (data.loans && data.loans.length > 0) {
+                let html = '<h3>Kết quả tìm kiếm:</h3>';
+                data.loans.forEach(loan => {
+                    html += `
+                        <div class="loan-item">
+                            <p><b>Mã hồ sơ:</b> ${loan.loanId}</p>
+                            <p><b>Số tiền:</b> ${parseInt(loan.amount).toLocaleString('vi-VN')} VNĐ</p>
+                            <p><b>Trạng thái:</b> <span class="status">${loan.status}</span></p>
+                            <p><b>Ngày tạo:</b> ${loan.createdAt}</p>
+                        </div>
+                    `;
+                });
+                resultDiv.innerHTML = html;
+            } else {
+                resultDiv.innerHTML = '<p style="color: red;">Không tìm thấy hồ sơ vay nào cho số điện thoại này.</p>';
+            }
+        }
+    </script>
 </body>
-                                                                   </html>
-                
+</html>
