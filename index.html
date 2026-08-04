@@ -3,168 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vay Tiền Nhanh Online</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Nạp file CSS riêng -->
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-
-    <div class="menu-btn" onclick="openSidebar()"><i class="fa-solid fa-bars"></i></div>
-    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
-    <div class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <h3>VAY ONLINE 24/7</h3>
-            <p style="font-size: 11px; opacity: 0.8;">Hệ thống vay tiêu dùng</p>
-        </div>
-        <ul class="sidebar-menu">
-            <li onclick="openModal('modalProfile')"><i class="fa-solid fa-id-card"></i> Hồ sơ của tôi</li>
-            <li onclick="openModal('modalReferral')"><i class="fa-solid fa-gift"></i> Giới thiệu bạn bè</li>
-            <li onclick="openModal('modalHistory')"><i class="fa-solid fa-clock-rotate-left"></i> Thông tin đã vay</li>
-            <li onclick="openModal('modalPayment')"><i class="fa-solid fa-calendar-check"></i> Ngày thanh toán</li>
-            <li onclick="openModal('modalAdminLogin')" style="margin-top:20px; color:#ef4444;"><i class="fa-solid fa-user-shield" style="color:#ef4444;"></i> Quản trị viên</li>
-        </ul>
-    </div>
-
-    <div class="header">
-        <h1>VAY TIỀN NHANH ONLINE</h1>
-        <p>Giải ngân siêu tốc trong 5 phút</p>
-    </div>
-
-    <div class="container">
-        <form id="loanForm" enctype="multipart/form-data">
-            <div class="card">
-                <div class="section-title"><i class="fa-solid fa-calculator"></i> Tính Khoản Vay</div>
-                <div class="calc-group">
-                    <div class="calc-header"><span>Số tiền</span><span id="amountDisplay" style="color:var(--primary); font-weight:800;">5.000.000 đ</span></div>
-                    <input type="range" id="amountRange" min="1000000" max="50000000" step="1000000" value="5000000">
-                </div>
-                <div class="calc-group">
-                    <div class="calc-header"><span>Thời hạn</span><span id="daysDisplay" style="color:var(--primary); font-weight:800;">30 ngày</span></div>
-                    <input type="range" id="daysRange" min="7" max="90" step="1" value="30">
-                </div>
-                <div class="summary-box">
-                    <div class="summary-row"><span>Tiền gốc:</span><strong id="summaryPrincipal">5.000.000 đ</strong></div>
-                    <div class="summary-row"><span>Lãi suất (12%/năm):</span><strong id="summaryInterest" style="color:var(--secondary)">49.315 đ</strong></div>
-                    <div class="summary-row" style="border-top:1px solid #ddd; padding-top:6px; margin-top:6px; font-weight:700;">
-                        <span>Tổng thanh toán:</span><span id="summaryTotal" style="color:#ef4444; font-size:15px;">5.049.315 đ</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="section-title"><i class="fa-solid fa-user"></i> Thông Tin Cá Nhân</div>
-                <div class="form-group"><div class="input-box"><i class="fa-solid fa-user"></i><input type="text" name="fullName" class="form-control" placeholder="Họ và tên theo CCCD" required></div></div>
-                <div class="form-group"><div class="input-box"><i class="fa-solid fa-phone"></i><input type="tel" name="phone" class="form-control" placeholder="Số điện thoại chính chủ" required></div></div>
-                <div class="form-group"><div class="input-box"><i class="fa-solid fa-building-columns"></i>
-                    <select name="bankName" class="form-control" required style="padding-left:40px;">
-                        <option value="">-- Chọn Ngân Hàng --</option>
-                        <option value="MB Bank">MB Bank</option>
-                        <option value="Vietcombank">Vietcombank</option>
-                        <option value="Techcombank">Techcombank</option>
-                        <option value="VPBank">VPBank</option>
-                        <option value="BIDV">BIDV</option>
-                        <option value="TPBANK">TPBANK</option>
-                    </select>
-                </div></div>
-                <div class="form-group"><div class="input-box"><i class="fa-solid fa-credit-card"></i><input type="number" name="bankAccount" class="form-control" placeholder="Số tài khoản nhận tiền" required></div></div>
-            </div>
-
-            <div class="card">
-                <div class="section-title"><i class="fa-solid fa-users"></i> Người Thân Tham Chiếu</div>
-                <div class="form-group"><div class="input-box"><i class="fa-solid fa-heart"></i>
-                    <select name="relativeRelation" class="form-control" required style="padding-left:40px;">
-                        <option value="Bố/Mẹ">Bố / Mẹ</option>
-                        <option value="Vợ/Chồng">Vợ / Chồng</option>
-                        <option value="Anh/Chị/Em">Anh / Chị / Em</option>
-                    </select>
-                </div></div>
-                <div class="form-group"><div class="input-box"><i class="fa-solid fa-user-tag"></i><input type="text" name="relativeName" class="form-control" placeholder="Tên người thân" required></div></div>
-                <div class="form-group"><div class="input-box"><i class="fa-solid fa-mobile-retro"></i><input type="tel" name="relativePhone" class="form-control" placeholder="SĐT người thân" required></div></div>
-            </div>
-
-            <div class="card">
-                <div class="section-title"><i class="fa-solid fa-camera"></i> Xác Thực Ảnh</div>
-                <div class="upload-grid">
-                    <div class="upload-card">
-                        <div id="c1"><i class="fa-solid fa-id-card" style="font-size:20px; color:var(--primary);"></i><br><span style="font-size:11px;">Mặt trước CCCD</span></div>
-                        <img id="p1" class="preview-img"><input type="file" name="cccdFront" accept="image/*" required onchange="prev(this,'p1','c1')">
-                    </div>
-                    <div class="upload-card">
-                        <div id="c2"><i class="fa-solid fa-user" style="font-size:20px; color:var(--primary);"></i><br><span style="font-size:11px;">Ảnh chân dung</span></div>
-                        <img id="p2" class="preview-img"><input type="file" name="selfie" accept="image/*" required onchange="prev(this,'p2','c2')">
-                    </div>
-                </div>
-            </div>
-
-            <button type="submit" class="btn-submit" id="subBtn">NỘP HỒ SƠ VAY</button>
-        </form>
-    </div>
-
-    <!-- Modal Cửa Sổ Bật Lên -->
-    <div class="modal" id="modalProfile">
-        <div class="modal-content">
-            <i class="fa-solid fa-xmark close-modal" onclick="closeModal('modalProfile')"></i>
-            <h3>Tra Cứu Hồ Sơ</h3>
-            <div class="form-group" style="margin-top:10px;"><input type="text" id="searchQuery" class="form-control" placeholder="Nhập SĐT hoặc Mã vay..." style="padding-left:12px;"></div>
-            <button class="btn-submit" style="padding:10px; font-size:13px;" onclick="checkStatus()">Tra cứu ngay</button>
-            <div id="profileResult"></div>
-        </div>
-    </div>
-
-    <div class="modal" id="modalReferral">
-        <div class="modal-content">
-            <i class="fa-solid fa-xmark close-modal" onclick="closeModal('modalReferral')"></i>
-            <h3>Giới Thiệu Nhận 100k</h3>
-            <p style="font-size:13px; color:#64748b; margin:10px 0;">Chia sẻ đường link dưới đây để nhận hoa hồng!</p>
-            <input type="text" class="form-control" readonly style="padding-left:12px;" value="https://app-vay-online.onrender.com/?ref=12345">
-        </div>
-    </div>
-
-    <div class="modal" id="modalHistory">
-        <div class="modal-content">
-            <i class="fa-solid fa-xmark close-modal" onclick="closeModal('modalHistory')"></i>
-            <h3>Thông Tin Đã Vay</h3>
-            <p style="font-size:13px; color:#64748b; margin-top:10px;">Mở mục <b>"Hồ sơ của tôi"</b> để xem lại thông tin khoản vay.</p>
-        </div>
-    </div>
-
-    <div class="modal" id="modalPayment">
-        <div class="modal-content">
-            <i class="fa-solid fa-xmark close-modal" onclick="closeModal('modalPayment')"></i>
-            <h3>Ngày Thanh Toán</h3>
-            <p style="font-size:13px; color:#64748b; margin-top:10px;">Lịch thanh toán hiển thị chi tiết trong mục <b>"Hồ sơ của tôi"</b>.</p>
-        </div>
-    </div>
-
-    <div class="modal" id="modalAdminLogin">
-        <div class="modal-content">
-            <i class="fa-solid fa-xmark close-modal" onclick="closeModal('modalAdminLogin')"></i>
-            <h3>Quản Trị Viên</h3>
-            <div class="form-group" style="margin-top:15px;"><input type="password" id="adminPass" class="form-control" placeholder="Mật khẩu Admin (123456)" style="padding-left:12px;"></div>
-            <button class="btn-submit" style="background:#ef4444; padding:10px;" onclick="adminLogin()">Đăng Nhập Quản Lý</button>
-        </div>
-    </div>
-
-    <div class="modal" id="modalAdminPanel">
-        <div class="modal-content" style="max-width:600px;">
-            <i class="fa-solid fa-xmark close-modal" onclick="closeModal('modalAdminPanel')"></i>
-            <h3>Quản Lý Duyệt Hồ Sơ</h3>
-            <div id="adminList" style="margin-top:15px;"></div>
-        </div>
-    </div>
-
-    <!-- Nạp file JavaScript riêng ở cuối body -->
-    <script src="script.js"></script>
-</body>
-    </html>
-                                                                                                   
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vay Tiền Nhanh Online 24/7</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -215,7 +53,7 @@
         <h1>GIẢI NGÂN SIÊU TỐC TRONG 5 PHÚT</h1>
         <p>Thủ tục đơn giản - Không thế chấp - Không gặp mặt</p>
         <div class="hero-badges">
-            <span><i class="fa-solid fa-circle-check"></i> Lãi suất 0% lần đầu</span>
+            <span><i class="fa-solid fa-circle-check"></i> Chạm là có tiền</span>
             <span><i class="fa-solid fa-circle-check"></i> Duyệt tự động</span>
         </div>
     </div>
@@ -378,5 +216,5 @@
 
     <script src="script.js"></script>
 </body>
-    </html>
-                                                                                                           
+        </html>
+                                                                                                                                                                                                             
