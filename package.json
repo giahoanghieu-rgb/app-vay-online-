@@ -1,14 +1,14 @@
 {
   "name": "app-vay-online",
   "version": "1.0.0",
-  "description": "",
+  "description": "App vay online 24/7",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
-    "cors": "^2.8.5",
-    "express": "^4.19.2",
-    "multer": "^1.4.5-lts.1"
+    "express": "^4.18.2",
+    "multer": "^1.4.5-lts.1",
+    "node-fetch": "^2.6.9"
   }
 }
