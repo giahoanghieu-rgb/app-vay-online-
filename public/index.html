@@ -5,28 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hệ Thống Vay Trực Tuyến 24/7</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background-color: #f4f6f9; color: #333; }
-        header { background: #0056b3; color: white; text-align: center; padding: 15px; font-size: 20px; font-weight: bold; }
+        header { background: #0056b3; color: white; text-align: center; padding: 18px; font-size: 20px; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         nav { display: flex; background: #004085; justify-content: space-around; }
-        nav button { background: none; border: none; color: white; padding: 12px 10px; font-size: 14px; cursor: pointer; flex: 1; text-align: center; }
+        nav button { background: none; border: none; color: white; padding: 12px 5px; font-size: 14px; cursor: pointer; flex: 1; text-align: center; transition: 0.3s; }
         nav button.active { background: #0056b3; font-weight: bold; border-bottom: 3px solid #ffc107; }
-        .container { max-width: 500px; margin: 20px auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .container { max-width: 500px; margin: 20px auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
-        h3 { margin-bottom: 15px; color: #0056b3; border-bottom: 2px solid #eee; padding-bottom: 8px; }
-        label { font-size: 13px; font-weight: bold; margin-top: 10px; display: block; color: #555; }
-        input, select { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px; }
-        .btn-submit { width: 100%; background: #28a745; color: white; padding: 12px; border: none; border-radius: 5px; font-size: 16px; font-weight: bold; margin-top: 20px; cursor: pointer; }
+        h3 { margin-bottom: 15px; color: #0056b3; border-bottom: 2px solid #eee; padding-bottom: 8px; font-size: 18px; }
+        label { font-size: 13px; font-weight: 600; margin-top: 12px; display: block; color: #495057; }
+        input, select { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ced4da; border-radius: 5px; font-size: 14px; outline: none; }
+        input:focus, select:focus { border-color: #0056b3; }
+        .btn-submit { width: 100%; background: #28a745; color: white; padding: 12px; border: none; border-radius: 5px; font-size: 16px; font-weight: bold; margin-top: 20px; cursor: pointer; transition: 0.2s; }
         .btn-submit:hover { background: #218838; }
-        .section-title { background: #e9ecef; padding: 8px 10px; font-weight: bold; margin-top: 15px; border-radius: 4px; font-size: 14px; }
-        .loan-item { border: 1px solid #ddd; padding: 12px; border-radius: 5px; margin-top: 10px; background: #fafafa; }
+        .section-title { background: #e9ecef; padding: 8px 10px; font-weight: bold; margin-top: 15px; border-radius: 4px; font-size: 13px; color: #333; }
+        .loan-card { border: 1px solid #e0e0e0; padding: 12px; border-radius: 6px; margin-top: 10px; background: #fafafa; }
     </style>
 </head>
 <body>
 
     <header>VAY TIỀN ONLINE 24/7</header>
     
+    <!-- THANH MENU CÁC MỤC -->
     <nav>
         <button id="btn-tab-vay" class="active" onclick="switchTab('vay')">Đăng ký vay</button>
         <button id="btn-tab-tracuu" onclick="switchTab('tracuu')">Tra cứu</button>
@@ -35,11 +37,11 @@
     </nav>
 
     <div class="container">
-        <!-- TAB 1: NỘP HỒ SƠ VAY -->
+        <!-- MỤC 1: TẠO HỒ SƠ VAY -->
         <div id="tab-vay" class="tab-content active">
-            <h3>Đăng ký khoản vay mới</h3>
+            <h3>Nộp Hồ Sơ Đăng Ký Vay</h3>
             <form id="loanForm" onsubmit="handleLoanSubmit(event)">
-                <div class="section-title">1. Thông tin khoản vay & Cá nhân</div>
+                <div class="section-title">1. Thông tin cá nhân & Ngân hàng</div>
                 
                 <label>Họ và tên khách hàng *</label>
                 <input type="text" id="fullName" placeholder="Nguyễn Văn A" required>
@@ -57,15 +59,15 @@
                     <option value="30">30 Ngày</option>
                 </select>
 
-                <label>Ngân hàng nhận tiền *</label>
-                <input type="text" id="bankName" placeholder="MB Bank, Vietcombank..." required>
+                <label>Tên ngân hàng *</label>
+                <input type="text" id="bankName" placeholder="MB Bank, Vietcombank, Techcombank..." required>
 
-                <label>Số tài khoản ngân hàng *</label>
+                <label>Số tài khoản nhận tiền *</label>
                 <input type="text" id="bankAccount" placeholder="123456789" required>
 
                 <div class="section-title">2. Thông tin người tham chiếu (Bắt buộc)</div>
 
-                <label>Mối quan hệ *</label>
+                <label>Mối quan hệ người thân *</label>
                 <select id="relativeRelation">
                     <option value="Bố/Mẹ">Bố / Mẹ</option>
                     <option value="Anh/Chị/Em">Anh / Chị / Em</option>
@@ -79,34 +81,34 @@
                 <label>Số điện thoại người thân *</label>
                 <input type="tel" id="relativePhone" placeholder="09xxxxxxxx" required>
 
-                <button type="submit" class="btn-submit">NỘP HỒ SƠ VAY NOW</button>
+                <button type="submit" class="btn-submit">NỘP HỒ SƠ VAY NGAY</button>
             </form>
         </div>
 
-        <!-- TAB 2: TRA CỨU HỒ SƠ -->
+        <!-- MỤC 2: TRA CỨU HỒ SƠ -->
         <div id="tab-tracuu" class="tab-content">
-            <h3>Tra cứu trạng thái khoản vay</h3>
-            <label>Nhập số điện thoại đăng ký:</label>
+            <h3>Tra cứu khoản vay đã nộp</h3>
+            <label>Nhập số điện thoại đã đăng ký:</label>
             <div style="display:flex; gap:8px; margin-top:5px;">
                 <input type="tel" id="searchPhone" placeholder="09xxxxxxxx" style="margin:0;">
-                <button onclick="handleSearchLoan()" style="padding:10px 15px; background:#0056b3; color:white; border:none; border-radius:5px; font-weight:bold; cursor:pointer;">Tìm</button>
+                <button onclick="handleSearchLoan()" style="padding:10px 15px; background:#0056b3; color:white; border:none; border-radius:5px; font-weight:bold; cursor:pointer;">Tìm kiếm</button>
             </div>
             <div id="searchResults" style="margin-top:15px;"></div>
         </div>
 
-        <!-- TAB 3: GIỚI THIỆU -->
+        <!-- MỤC 3: GIỚI THIỆU -->
         <div id="tab-gioithieu" class="tab-content">
-            <h3>Về dịch vụ của chúng tôi</h3>
-            <p style="line-height:1.6;">Ứng dụng vay tiền trực tuyến uy tín, giải ngân nhanh trong 15 phút. Quy trình đơn giản 100% online, không cần thế chấp tài sản.</p>
+            <h3>Giới thiệu dịch vụ</h3>
+            <p style="line-height:1.6; color:#555;">Dịch vụ hỗ trợ tài chính trực tuyến nhanh chóng, giải ngân chỉ trong 15 phút. Hệ thống duyệt tự động 24/7, không giữ giấy tờ, không thẩm định nhà.</p>
         </div>
 
-        <!-- TAB 4: HỖ TRỢ -->
+        <!-- MỤC 4: HỖ TRỢ -->
         <div id="tab-hotro" class="tab-content">
-            <h3>Trung tâm hỗ trợ khách hàng</h3>
-            <p style="line-height:1.8;">
-                📞 <b>Hotline:</b> 1900 xxxx (8:00 - 21:00)<br>
-                💬 <b>Zalo Hỗ trợ:</b> 0987.xxx.xxx<br>
-                📧 <b>Email:</b> hotro@vayonline.com
+            <h3>Trung tâm hỗ trợ</h3>
+            <p style="line-height:1.8; color:#555;">
+                📞 <b>Hotline:</b> 1900 xxxx (8:00 - 22:00)<br>
+                💬 <b>Zalo Hỗ Trợ:</b> 09xxxxxxxx<br>
+                ✉️ <b>Email:</b> cskh@support.com
             </p>
         </div>
     </div>
@@ -142,13 +144,13 @@
                 });
                 const result = await res.json();
                 if (result.success) {
-                    alert('🎉 Đăng ký thành công! Mã khoản vay của bạn là: ' + result.loanId);
+                    alert('🎉 Nộp hồ sơ thành công! Mã khoản vay: ' + result.loanId);
                     document.getElementById('loanForm').reset();
                 } else {
                     alert('❌ Lỗi: ' + result.message);
                 }
             } catch (err) {
-                alert('❌ Lỗi gửi hồ sơ. Vui lòng thử lại!');
+                alert('❌ Gửi hồ sơ thất bại. Vui lòng kiểm tra lại kết nối!');
             }
         }
 
@@ -163,20 +165,19 @@
                 
                 if (data.loans && data.loans.length > 0) {
                     container.innerHTML = data.loans.map(l => `
-                        <div class="loan-item">
-                            <b>Mã hồ sơ:</b> ${l.loanId}<br>
-                            <b>Số tiền:</b> ${l.amount.toLocaleString('vi-VN')} VNĐ (${l.days} ngày)<br>
-                            <b>Trạng thái:</b> <span style="color:orange; font-weight:bold;">${l.status}</span>
+                        <div class="loan-card">
+                            <b>Mã khoản vay:</b> ${l.loanId}<br>
+                            <b>Số tiền:</b> ${Number(l.amount).toLocaleString('vi-VN')} VNĐ (${l.days} ngày)<br>
+                            <b>Trạng thái:</b> <span style="color:#e67e22; font-weight:bold;">${l.status}</span>
                         </div>
                     `).join('');
                 } else {
-                    container.innerHTML = '<p style="color:red; margin-top:10px;">Không tìm thấy khoản vay nào với SĐT này!</p>';
+                    container.innerHTML = '<p style="color:red; margin-top:10px;">Không tìm thấy hồ sơ nào cho số điện thoại này!</p>';
                 }
             } catch (err) {
-                alert('Lỗi tra cứu!');
+                alert('Có lỗi xảy ra khi tra cứu!');
             }
         }
     </script>
 </body>
-            </html>
-                
+</html>
