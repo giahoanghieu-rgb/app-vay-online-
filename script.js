@@ -231,3 +231,162 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
                 
+// Quản lý Sidebar & Modal
+function openSidebar() { document.getElementById('sidebar').classList.add('active'); document.getElementById('sidebarOverlay').style.display = 'block'; }
+function closeSidebar() { document.getElementById('sidebar').classList.remove('active'); document.getElementById('sidebarOverlay').style.display = 'none'; }
+function openModal(id) { closeSidebar(); document.getElementById(id).style.display = 'flex'; }
+function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+function switchAuthModal(fromModal, toModal) { closeModal(fromModal); openModal(toModal); }
+
+// XỬ LÝ HẠN MỨC THEO CẤP BẬC
+let currentMaxAmount = 500000; // Mặc định khách mới max 500.000 VNĐ
+
+document.addEventListener('DOMContentLoaded', function() {
+    const amountRange = document.getElementById('amountRange');
+    const daysRange = document.getElementById('daysRange');
+
+    // Kiểm tra cấp bậc người dùng từ LocalStorage
+    const userRank = localStorage.getItem('userRank') || 'Đồng';
+    const completedLoans = parseInt(localStorage.getItem('completedLoans') || '0');
+
+    if (completedLoans >= 3) currentMaxAmount = 5000000;  // Vay 3-5 lần: Hạn mức 5M
+    if (completedLoans >= 6) currentMaxAmount = 15000000; // Vay >6 lần: Hạn mức 15M
+
+    if (amountRange) {
+        amountRange.max = currentMaxAmount;
+        if (parseInt(amountRange.value) > currentMaxAmount) {
+            amountRange.value = currentMaxAmount;
+        }
+
+        function calc() {
+            const a = parseInt(amountRange.value), d = parseInt(daysRange.value);
+            const interest = Math.round(a * (0.12 / 365) * d);
+            const fmt = (n) => new Intl.NumberFormat('vi-VN').format(n) + ' đ';
+            document.getElementById('amountDisplay').innerText = fmt(a);
+            document.getElementById('daysDisplay').innerText = d + ' ngày';
+            document.getElementById('summaryPrincipal').innerText = fmt(a);
+            document.getElementById('summaryInterest').innerText = fmt(interest);
+            document.getElementById('summaryTotal').innerText = fmt(a + interest);
+        }
+
+        amountRange.addEventListener('input', calc);
+        daysRange.addEventListener('input', calc);
+        calc();
+    }
+});
+
+// PREVIEW ẢNH
+function prev(input, imgId, cId) {
+    if (input.files && input.files[0]) {
+        const r = new FileReader();
+        r.onload = (e) => {
+            document.getElementById(imgId).src = e.target.result;
+            document.getElementById(imgId).style.display = 'block';
+            document.getElementById(cId).style.display = 'none';
+        }
+        r.readAsDataURL(input.files[0]);
+    }
+}
+
+// XỬ LÝ ĐĂNG KÝ / ĐĂNG NHẬP KHÁCH HÀNG
+document.addEventListener('DOMContentLoaded', function() {
+    const registerForm = document.getElementById('registerForm');
+    if (registerForm) {
+        registerForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const name = document.getElementById('regName').value;
+            const phone = document.getElementById('regPhone').value;
+            const password = document.getElementById('regPass').value;
+
+            try {
+                const res = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, phone, password })
+                });
+                const r = await res.json();
+                if (r.success) {
+                    alert('🎉 Đăng ký thành công!');
+                    localStorage.setItem('userName', name);
+                    localStorage.setItem('userPhone', phone);
+                    localStorage.setItem('completedLoans', '0');
+                    closeModal('modalRegister');
+                    location.reload();
+                } else alert('❌ ' + r.message);
+            } catch (err) {
+                alert('Đăng ký thành công (Demo offline)');
+                closeModal('modalRegister');
+            }
+        });
+    }
+});
+
+// XỬ LÝ QUẢN TRỊ ADMIN PANEL
+async function loginAdmin(e) {
+    e.preventDefault();
+    const u = document.getElementById('adminUser').value;
+    const p = document.getElementById('adminPass').value;
+
+    if (u === 'admin' && p === 'admin123') {
+        alert('🔑 Đăng nhập Administrator thành công!');
+        closeModal('modalAdminLogin');
+        openModal('modalAdminPanel');
+        loadAdminData();
+    } else {
+        alert('❌ Sai tài khoản hoặc mật khẩu Quản trị viên!');
+    }
+}
+
+function switchAdminTab(tabName) {
+    document.querySelectorAll('.admin-tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.admin-tab-content').forEach(c => c.style.display = 'none');
+    
+    document.getElementById('tab-btn-' + tabName).classList.add('active');
+    document.getElementById('admin-tab-' + tabName).style.display = 'block';
+}
+
+async function loadAdminData() {
+    try {
+        const res = await fetch('/api/admin/data');
+        const data = await res.json();
+        
+        // 1. Tải danh sách Tài khoản
+        let userHtml = `<table class="admin-table"><tr><th>Họ Tên</th><th>SĐT</th><th>Số lần vay thành công</th></tr>`;
+        data.users.forEach(u => {
+            userHtml += `<tr><td>${u.name}</td><td>${u.phone}</td><td>${u.completedLoans} lần</td></tr>`;
+        });
+        document.getElementById('admin-tab-users').innerHTML = userHtml + '</table>';
+
+        // 2. Tải Hồ sơ Vay & Duyệt
+        let loanHtml = `<table class="admin-table"><tr><th>Mã Vay</th><th>Khách Hàng</th><th>Số Tiền</th><th>Trạng Thái</th><th>Thao Tác</th></tr>`;
+        data.loans.forEach(l => {
+            loanHtml += `<tr>
+                <td>#${l.loanId}</td>
+                <td>${l.fullName}<br><small>${l.phone}</small></td>
+                <td>${new Intl.NumberFormat('vi-VN').format(l.amount)}đ</td>
+                <td><b>${l.status}</b></td>
+                <td>
+                    <button class="btn-action-approve" onclick="updateLoanStatus('${l.loanId}', 'Đã duyệt')">Duyệt</button>
+                    <button class="btn-action-reject" onclick="updateLoanStatus('${l.loanId}', 'Từ chối')">Hủy</button>
+                </td>
+            </tr>`;
+        });
+        document.getElementById('admin-tab-loans').innerHTML = loanHtml + '</table>';
+        document.getElementById('admin-tab-records').innerHTML = loanHtml + '</table>';
+    } catch(e) {
+        document.getElementById('admin-tab-users').innerHTML = '<p style="padding:10px;">Đang chạy chế độ xem thử offline.</p>';
+    }
+}
+
+async function updateLoanStatus(loanId, status) {
+    if(!confirm(`Xác nhận đổi trạng thái hồ sơ #${loanId} thành "${status}"?`)) return;
+    try {
+        await fetch('/api/admin/update-status', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ loanId, status })
+        });
+        alert('Cập nhật trạng thái thành công!');
+        loadAdminData();
+    } catch(e) { alert('Lỗi kết nối!'); }
+                                    }
